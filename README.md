@@ -1,5 +1,7 @@
 # weather-app
 
+I used Weather API from https://openweathermap.org/api
+
 ## Project setup
 ```
 npm install
