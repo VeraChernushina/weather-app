@@ -2,18 +2,25 @@
   <div id="app">
     <main>
       <div class="search-box">
-        <input type="text" name="search-bar" class="search-bar" placeholder="Search..." />
+        <input
+          type="text" 
+          name="search-bar" 
+          class="search-bar" 
+          placeholder="Search..."
+          v-model="query"
+          @keypress="fetchWeather"
+        />
       </div>
 
-      <div class="weather-wrap">
+      <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
         <div class="location-box">
-          <div class="location">Northampton, UK</div>
+          <div class="location">{{ weather.name }}, {{ weather.sys.country }}</div>
           <div class="date">Sunday 22 May 2022</div>
         </div>
 
         <div class="weather-box">
-          <div class="temp">9 C</div>
-          <div class="weather">Rain</div>
+          <div class="temp">{{ Math.round(weather.main.temp) }} C</div>
+          <div class="weather">{{ weather.weather[0].main }}</div>
         </div>
       </div>
     </main>
@@ -24,7 +31,27 @@
 export default {
   name: 'App',
   data () {
-    // api_key: '8f00ebd1a5996a984c246f720c4c482d'
+    return {
+      apiKey: '8f00ebd1a5996a984c246f720c4c482d',
+      baseUrl: 'https://api.openweathermap.org/data/2.5/',
+      query: '',
+      weather: {}
+    }
+  },
+  methods: {
+    fetchWeather(e) {
+      if (e.key === "Enter") {
+        fetch(`${this.baseUrl}weather?q=${this.query}&units=metric&APPID=${this.apiKey}`)
+          .then(res => {
+            return res.json();
+          })
+          .then(this.setResults);
+      }
+    },
+
+    setResults(results) {
+      this.weather = results;
+    }
   }
 }
 </script>
@@ -41,6 +68,7 @@ body {
 }
 
 #app {
+  max-width: 375px;
   background-image: url('./assets/cold-bg.jpeg');
   background-size: cover;
   background-position: bottom;
